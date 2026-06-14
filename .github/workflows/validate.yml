@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: The renovate-config Authors
+# SPDX-License-Identifier: 0BSD
+
+name: Validate Renovate config
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      # default.json is a preset, not a standard Renovate config filename, so the validator cannot
+      # auto-discover it — pass it explicitly. --strict fails on warnings, not just hard errors.
+      - name: Validate preset
+        run: npx --yes --package renovate -- renovate-config-validator --strict default.json
