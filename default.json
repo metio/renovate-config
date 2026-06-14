@@ -1,13 +1,33 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    ":semanticCommits",
+    "helpers:pinGitHubActionDigests"
   ],
+  "timezone": "Europe/Berlin",
   "assignees": [
     "sebhoss"
+  ],
+  "labels": [
+    "dependencies"
   ],
   "automerge": true,
   "major": {
     "automerge": true
+  },
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": [
+      "security"
+    ],
+    "minimumReleaseAge": "0 days"
   }
 }
