@@ -89,6 +89,11 @@
     {
       "matchManagers": ["helmv3", "helm-values", "helm-requirements"],
       "groupName": "helm charts"
+    },
+    {
+      "description": "First-party metio artifacts (images + OCI charts under ghcr.io/metio) carry no supply-chain soak: we publish them ourselves, so the minimumReleaseAge that protects against yanked/compromised third-party releases adds no safety and only delays our own release cascade (a controller image must bump the chart's appVersion, which gates the chart release, which gates the e2e smoke tests). Overriding to 0 days lets a freshly published ghcr.io/metio/* dependency update — and automerge — on the next run.",
+      "matchPackageNames": ["ghcr.io/metio/**"],
+      "minimumReleaseAge": "0 days"
     }
   ]
 }
