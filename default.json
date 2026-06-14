@@ -3,7 +3,8 @@
   "extends": [
     "config:recommended",
     ":semanticCommits",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    "docker:pinDigests"
   ],
   "timezone": "Europe/Berlin",
   "assignees": [
@@ -16,6 +17,7 @@
   "major": {
     "automerge": true
   },
+  "rebaseWhen": "behind-base-branch",
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
   "prHourlyLimit": 0,
@@ -29,5 +31,64 @@
       "security"
     ],
     "minimumReleaseAge": "0 days"
-  }
+  },
+  "packageRules": [
+    {
+      "description": "Group updates per language ecosystem so each lands as a single PR.",
+      "matchCategories": ["golang"],
+      "groupName": "go modules"
+    },
+    {
+      "matchCategories": ["java"],
+      "groupName": "java dependencies"
+    },
+    {
+      "matchCategories": ["rust"],
+      "groupName": "rust crates"
+    },
+    {
+      "matchCategories": ["js", "node"],
+      "groupName": "javascript dependencies"
+    },
+    {
+      "matchCategories": ["python"],
+      "groupName": "python dependencies"
+    },
+    {
+      "matchCategories": ["ruby"],
+      "groupName": "ruby gems"
+    },
+    {
+      "matchCategories": ["php"],
+      "groupName": "php dependencies"
+    },
+    {
+      "matchCategories": ["dotnet"],
+      "groupName": "dotnet dependencies"
+    },
+    {
+      "matchCategories": ["dart"],
+      "groupName": "dart packages"
+    },
+    {
+      "matchCategories": ["elixir"],
+      "groupName": "elixir dependencies"
+    },
+    {
+      "description": "Group tooling updates the same way.",
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    },
+    {
+      "description": "Pin base-image digests (docker:pinDigests) but batch them into ONE weekly PR instead of one per upstream rebuild — distroless/chainguard rebuild constantly, so per-rebuild PRs would be noise. The weekly window paces them; the 3-day soak is relaxed here because trusted-base digests don't get yanked, the cadence is the control.",
+      "matchManagers": ["dockerfile", "docker-compose"],
+      "groupName": "container base images",
+      "schedule": ["before 6am on monday"],
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "matchManagers": ["helmv3", "helm-values", "helm-requirements"],
+      "groupName": "helm charts"
+    }
+  ]
 }

@@ -29,6 +29,12 @@ platform-agnostic alternative that resolves through whatever platform Renovate i
 - **`automerge: true`** with **`major.automerge: true`** — every update, including major-version bumps,
   is auto-merged once required status checks pass. Auto-merge uses the platform's native mechanism
   (`platformAutomerge`), so a repo's branch protection still gates the merge.
+- **`rebaseWhen: "behind-base-branch"`** — Renovate rebases any PR that falls
+  behind its base branch on the next run, so when one PR merges its siblings are
+  brought up to date automatically. This is what keeps auto-merge hands-off under
+  a "require branches to be up to date before merging" branch-protection rule —
+  without it, the second of two PRs touching the same file gets stuck
+  "out-of-date" and never merges.
 - **`assignees: ["sebhoss"]`** — update PRs are assigned to the maintainer.
 - **`labels: ["dependencies"]`** — every update PR is labelled, so they can be
   filtered/automated uniformly. Note: Renovate does **not** create labels — the
@@ -40,9 +46,12 @@ platform-agnostic alternative that resolves through whatever platform Renovate i
 - **`helpers:pinGitHubActionDigests`** — pins every `uses:` action to its commit
   SHA (`actions/checkout@<sha> # v6`). Supply-chain hardening: a moved tag can't
   silently change a workflow. Renovate keeps the `# vX` comment current and
-  auto-merges digest bumps. (Container base images in `FROM` lines are left on
-  their tags — `docker:pinDigests` would churn against the fast-moving chainguard
-  bases; add it per-repo if a repo wants it.)
+  auto-merges digest bumps.
+- **`docker:pinDigests`** — pins `FROM` base-image digests too. On its own this
+  would churn hard (distroless/chainguard rebuild constantly), so the **container
+  base images** group below collapses every base-image update into **one weekly
+  PR** (`schedule: before 6am on monday`, `minimumReleaseAge: "0 days"`) — the
+  weekly cadence is the control, not a per-rebuild PR.
 - **`minimumReleaseAge: "3 days"`** with **`internalChecksFilter: "strict"`** — an
   update PR isn't even raised until the release is 3 days old, so a yanked or
   broken-but-CI-passing release is caught by the ecosystem before it auto-merges.
@@ -56,6 +65,14 @@ platform-agnostic alternative that resolves through whatever platform Renovate i
   (`minimumReleaseAge: "0 days"`) so fixes land immediately.
 - **`timezone: "Europe/Berlin"`** — the dependency dashboard and schedules render
   in the maintainer's local time.
+- **Per-ecosystem grouping** (`packageRules`) — updates are grouped by language /
+  tooling so each lands as a single PR: `go modules`, `java dependencies`,
+  `rust crates`, `javascript dependencies`, `python dependencies`, … plus
+  `github actions`, `container base images`, and `helm charts`. Fewer PRs, and
+  fewer same-file conflicts between sibling Renovate PRs. A repo that doesn't use
+  an ecosystem simply never sees that group. (Trade-off: a breaking major inside
+  a group blocks that group's auto-merge until resolved — restrict a group with
+  `matchUpdateTypes` if you'd rather isolate majors.)
 
 The policy is deliberately "pay in tests, not manual review": breaking changes are caught by each
 repo's CI gate rather than by holding majors back for hand inspection. The only non-test safeguard is
