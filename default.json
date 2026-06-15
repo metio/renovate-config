@@ -91,8 +91,8 @@
       "groupName": "helm charts"
     },
     {
-      "description": "First-party metio artifacts (images + OCI charts under ghcr.io/metio) carry no supply-chain soak: we publish them ourselves, so the minimumReleaseAge that protects against yanked/compromised third-party releases adds no safety and only delays our own release cascade (a controller image must bump the chart's appVersion, which gates the chart release, which gates the e2e smoke tests). Overriding to 0 days lets a freshly published ghcr.io/metio/* dependency update — and automerge — on the next run.",
-      "matchPackageNames": ["ghcr.io/metio/**"],
+      "description": "First-party metio artifacts carry no supply-chain soak: we publish them ourselves, so the minimumReleaseAge that protects against yanked/compromised third-party releases adds no safety and only delays our own release cascade (a controller image must bump the chart's appVersion, which gates the chart release, which gates the e2e smoke tests). This covers two naming forms: the ghcr.io/metio/* images and OCI charts (docker datasource), AND the github-releases entries the helm-charts repo tracks for chart appVersions (depName metio/<repo>, no ghcr.io prefix) — the latter is deliberate because the controller release pushes the image before it creates the git tag, so the chart bump follows the tag. Overriding to 0 days lets a freshly published metio dependency update — and automerge — on the next run.",
+      "matchPackageNames": ["ghcr.io/metio/**", "metio/**"],
       "minimumReleaseAge": "0 days"
     }
   ]
