@@ -94,6 +94,11 @@
       "description": "First-party metio artifacts carry no supply-chain soak: we publish them ourselves, so the minimumReleaseAge that protects against yanked/compromised third-party releases adds no safety and only delays our own release cascade (a controller image must bump the chart's appVersion, which gates the chart release, which gates the e2e smoke tests). This covers two naming forms: the ghcr.io/metio/* images and OCI charts (docker datasource), AND the github-releases entries the helm-charts repo tracks for chart appVersions (depName metio/<repo>, no ghcr.io prefix) — the latter is deliberate because the controller release pushes the image before it creates the git tag, so the chart bump follows the tag. Overriding to 0 days lets a freshly published metio dependency update — and automerge — on the next run.",
       "matchPackageNames": ["ghcr.io/metio/**", "metio/**"],
       "minimumReleaseAge": "0 days"
+    },
+    {
+      "description": "The shared metio-hugo-theme is vendored as a git submodule in the website repos. Like the other first-party metio artifacts above it is published by us, so the global 3-day minimumReleaseAge adds no supply-chain safety and only delays the theme rollout. The git-submodules manager keys on the submodule's repository URL (https://github.com/metio/metio-hugo-theme.git), which the metio/** glob above cannot match, so override it here. Every git submodule across the metio repos is this first-party theme.",
+      "matchManagers": ["git-submodules"],
+      "minimumReleaseAge": "0 days"
     }
   ]
 }
