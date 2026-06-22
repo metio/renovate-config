@@ -32,6 +32,29 @@
     ],
     "minimumReleaseAge": "0 days"
   },
+  "customManagers": [
+    {
+      "description": "Bump tool versions pinned in Containerfiles/Dockerfiles via a `# renovate: datasource=… depName=… [versioning=…] [extractVersion=…]` comment directly above an `ARG/ENV …_VERSION=…` line. Renovate's built-in customManagers:dockerfileVersions preset only matches files literally named Dockerfile and does not capture extractVersion; the metio dev shells use `dev/Containerfile` and one marker needs extractVersion (biome), so define it here. This is what makes every hand-pinned dev/CI tool (helm, kube-score, kubeconform, cosign, helm-schema, typos, …) Renovate-owned instead of a manual bump.",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)Containerfile$/",
+        "/(^|/)Dockerfile[^/]*$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?( extractVersion=(?<extractVersion>\\S+))?\\s+(ENV|ARG) .+?_VERSION[ =][\"']?(?<currentValue>.+?)[\"']?\\s"
+      ]
+    },
+    {
+      "description": "Bump tool versions pinned in a GitHub Actions workflow `env:` block via a `# renovate: datasource=… depName=… [versioning=…] [extractVersion=…]` comment directly above a `…_VERSION: …` key. Mirrors customManagers:githubActionsVersions but also captures extractVersion (biome). Keeps the `curl …/releases/download/<ver>/` tool installs in verify/release workflows current without manual edits.",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/[^/]+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?( extractVersion=(?<extractVersion>\\S+))?\\s+[\\w-]+?_VERSION\\s*:\\s*[\"']?(?<currentValue>.+?)[\"']?\\s"
+      ]
+    }
+  ],
   "packageRules": [
     {
       "description": "Group updates per language ecosystem so each lands as a single PR.",
@@ -80,7 +103,7 @@
       "groupName": "github actions"
     },
     {
-      "description": "Pin base-image digests (docker:pinDigests) but batch them into ONE weekly PR instead of one per upstream rebuild — distroless/chainguard rebuild constantly, so per-rebuild PRs would be noise. The weekly window paces them; the 3-day soak is relaxed here because trusted-base digests don't get yanked, the cadence is the control.",
+      "description": "Pin base-image digests (docker:pinDigests) but batch them into ONE weekly PR instead of one per upstream rebuild — trusted bases like distroless rebuild constantly, so per-rebuild PRs would be noise. The weekly window paces them; the 3-day soak is relaxed here because trusted-base digests don't get yanked, the cadence is the control.",
       "matchManagers": ["dockerfile", "docker-compose"],
       "groupName": "container base images",
       "schedule": ["before 6am on monday"],
