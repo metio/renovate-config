@@ -5,6 +5,7 @@ path = [
     "default.json",
     "README.md",
     "CLAUDE.md",
+    "renovate.json",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "The renovate-config Authors"
