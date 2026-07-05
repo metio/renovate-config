@@ -122,6 +122,13 @@
       "description": "The shared metio-hugo-theme is vendored as a git submodule in the website repos. Like the other first-party metio artifacts above it is published by us, so the global 3-day minimumReleaseAge adds no supply-chain safety and only delays the theme rollout. The git-submodules manager keys on the submodule's repository URL (https://github.com/metio/metio-hugo-theme.git), which the metio/** glob above cannot match, so override it here. Every git submodule across the metio repos is this first-party theme.",
       "matchManagers": ["git-submodules"],
       "minimumReleaseAge": "0 days"
+    },
+    {
+      "description": "The metio/ci reusable actions (metio/ci/<action>@<sha>) are pinned by SHA in every metio repo's workflows and bumped by the github-actions manager (depName metio/ci). Like the other first-party metio artifacts above they are published by us, so the 3-day soak adds no supply-chain safety and only delays a CI-convention change from cascading across the repos that consume it. Two overrides are needed beyond the metio/** rule: pull these bumps out of the shared 'github actions' group (otherwise a metio/ci update waits on that group's slowest soaking third-party action) into their own group, and drop the soak to 0 days so a freshly released metio/ci automerges on the next run.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["metio/**"],
+      "groupName": "metio ci",
+      "minimumReleaseAge": "0 days"
     }
   ]
 }
