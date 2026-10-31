@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: The renovate-config Authors
+SPDX-License-Identifier: 0BSD
+-->
+
 # renovate-config
 
 Organization-wide [Renovate](https://docs.renovatebot.com/) configuration preset for all `metio`
