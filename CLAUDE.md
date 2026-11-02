@@ -36,7 +36,7 @@ run — there is no per-repo rollout. Treat changes here as org-wide. Current in
   (`The renovate-config Authors`) and `SPDX-License-Identifier` (`0BSD`) declaration. YAML workflows
   carry these inline as `#` comments; files that cannot carry comments (`default.json`) and the Markdown
   docs are covered by globs in `REUSE.toml`. The `reuse.yml` workflow enforces this with `fsfe/reuse-action`.
-- **Validation:** `validate.yml` runs `renovate-config-validator --strict default.json` on every push
+- **Validation:** `verify.yml` runs `renovate-config-validator --strict default.json` on every push
   and PR. Run it locally with `npx --yes --package renovate -- renovate-config-validator --strict default.json`.
   Keep the preset valid — a broken `default.json` propagates to every dependent repo.
 - **This repo dogfoods itself:** it does not need its own `renovate.json` to be useful, but if one is

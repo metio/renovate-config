@@ -103,7 +103,7 @@ for one package:
 
 ## Validation
 
-[`validate.yml`](.github/workflows/validate.yml) runs `renovate-config-validator --strict` against
+[`verify.yml`](.github/workflows/verify.yml) runs `renovate-config-validator --strict` against
 `default.json` on every push and pull request, so a malformed preset never reaches the repositories that
 depend on it. [`reuse.yml`](.github/workflows/reuse.yml) enforces [REUSE](https://reuse.software/)
 licensing compliance.
