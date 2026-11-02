@@ -57,17 +57,23 @@ platform-agnostic alternative that resolves through whatever platform Renovate i
   base images** group below collapses every base-image update into **one weekly
   PR** (`schedule: before 6am on monday`, `minimumReleaseAge: "0 days"`) — the
   weekly cadence is the control, not a per-rebuild PR.
+- **`schedule: ["before 6am on monday"]`** — third-party updates are raised once
+  a week, so a burst of upstream releases becomes one round of PRs and CI runs
+  instead of one per day. Security fixes and first-party metio artifacts keep
+  `at any time`, so they still land on the next run.
 - **`minimumReleaseAge: "3 days"`** with **`internalChecksFilter: "strict"`** — an
   update PR isn't even raised until the release is 3 days old, so a yanked or
   broken-but-CI-passing release is caught by the ecosystem before it auto-merges.
-- **`prHourlyLimit: 0` + `prConcurrentLimit: 0`** — no throttle. Since everything
-  auto-merges, updates land as fast as CI clears them rather than queueing.
+- **`prHourlyLimit: 0` + `prConcurrentLimit: 10`** — at most ten open update PRs
+  per repository. The weekly window raises them together, and the cap keeps one
+  repository from occupying every runner the account has while CI clears them.
 - **`postUpdateOptions: ["gomodTidy"]`** — after a `go.mod` bump, `go mod tidy`
   runs so `go.sum` stays consistent and the PR merges cleanly (Go repos; a no-op
   elsewhere).
 - **`osvVulnerabilityAlerts` + `vulnerabilityAlerts`** — OSV-based vulnerability
   detection; security-fix PRs get a `security` label and **skip the 3-day soak**
-  (`minimumReleaseAge: "0 days"`) so fixes land immediately.
+  (`minimumReleaseAge: "0 days"`) and the weekly schedule (`at any time`) so
+  fixes land immediately.
 - **`timezone: "Europe/Berlin"`** — the dependency dashboard and schedules render
   in the maintainer's local time.
 - **Per-ecosystem grouping** (`packageRules`) — updates are grouped by language /
