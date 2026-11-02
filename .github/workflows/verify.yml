@@ -23,7 +23,10 @@ jobs:
       # default.json is a preset, not a standard Renovate config filename, so the validator cannot
       # auto-discover it — pass it explicitly. --strict fails on warnings, not just hard errors.
       - name: Validate preset
-        run: npx --yes --package renovate -- renovate-config-validator --strict default.json
+        env:
+          # renovate: datasource=npm depName=renovate
+          RENOVATE_VERSION: 44.199.2
+        run: npx --yes --package "renovate@$RENOVATE_VERSION" -- renovate-config-validator --strict default.json
   verify:
     name: Verify
     needs: [validate]
