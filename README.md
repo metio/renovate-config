@@ -34,12 +34,11 @@ platform-agnostic alternative that resolves through whatever platform Renovate i
 - **`automerge: true`** with **`major.automerge: true`** — every update, including major-version bumps,
   is auto-merged once required status checks pass. Auto-merge uses the platform's native mechanism
   (`platformAutomerge`), so a repo's branch protection still gates the merge.
-- **`rebaseWhen: "behind-base-branch"`** — Renovate rebases any PR that falls
-  behind its base branch on the next run, so when one PR merges its siblings are
-  brought up to date automatically. This is what keeps auto-merge hands-off under
-  a "require branches to be up to date before merging" branch-protection rule —
-  without it, the second of two PRs touching the same file gets stuck
-  "out-of-date" and never merges.
+- **`rebaseWhen: "auto"`** — on a branch with a merge queue, Renovate rebases a PR
+  only when it conflicts, since the queue already tests each PR against the head of
+  the base branch before it merges. Elsewhere, with auto-merge on, it rebases any PR
+  that falls behind its base branch, so the siblings of a merged PR come up to date
+  on the next run.
 - **`assignees: ["sebhoss"]`** — update PRs are assigned to the maintainer.
 - **`labels: ["dependencies"]`** — every update PR is labelled, so they can be
   filtered/automated uniformly. Note: Renovate does **not** create labels — the

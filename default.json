@@ -17,7 +17,7 @@
   "major": {
     "automerge": true
   },
-  "rebaseWhen": "behind-base-branch",
+  "rebaseWhen": "auto",
   "schedule": ["before 6am on monday"],
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
